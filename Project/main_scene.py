@@ -22,10 +22,10 @@ class Monster_flare:
         self.frame = 0
 
     def draw(self):
-        Monster_flare.image.clip_draw(self.frame*150,self.state*150,150,150,self.x,self.y)
+        Monster_flare.image.clip_draw(self.frame*150, self.state*150, 150, 150, self.x, self.y)
 
     def update(self):
-        self.frame += 1
+        self.frame =(self.frame+1)%4
         if self.x != self.DES_X or self.y != self.DES_Y:
             if self.x > self.DES_X:
                 self.state = self.RIGHT_RUN
@@ -37,7 +37,8 @@ class Monster_flare:
 
 
 def enter():
-    global flare
+    global flare,running
+    running = True
     flare = Monster_flare()
 
 def exit():
@@ -64,7 +65,7 @@ def update():
 
     flare.update()
 
-    delay(0.01)
+    delay(0.1)
 
 
 def draw():
@@ -72,7 +73,7 @@ def draw():
 
     clear_canvas()
 
-    flare.update()
+    flare.draw()
 
     update_canvas()
 
