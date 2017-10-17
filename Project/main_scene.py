@@ -4,8 +4,10 @@ import game_framework
 class Map:
     image =None
     def __init__(self):
+        self.matrix = [[1,0,1,0],[1,1,1,1],[1,1,1,0],[0,1,1,0],[0,1,1,0],[1,1,0,1],[1,1,1,0]]
         if Map.image == None :
             Map.image = [load_image('tile1.png'), load_image('tile2.png')]
+
 
 
     def draw(self):
@@ -15,7 +17,7 @@ class Map:
         col = 0
         for j in range(1,8):
             for i in range(1,5-(j%2)):
-                self.image[0].clip_draw(0,0,150,100,(150*i)+(75*(j%2))+25,500-(35*j))
+                self.image[self.matrix[j-1][i-1]].clip_draw(0,0,150,100,(150*i)+(75*(j%2))+25,450-(35*j))
 
 class Monster_flare:
     image = None
@@ -30,13 +32,13 @@ class Monster_flare:
         self.dir = self.LEFT_DIR
         self.MAX_HP, self.MAX_MP= 300 , 5
         self.CUR_HP, self.CUR_MP=self.MAX_HP, self.MAX_MP
-        self.x,self.y = 500,470
+        self.x,self.y = 1,1
         self.DES_X,self.DES_Y = self.x,self.y
         self.state = self.STAND
         self.frame = 0
 
     def draw(self):
-        Monster_flare.image.clip_draw(self.frame*150, self.state*150, 150, 150, self.x, self.y)
+        Monster_flare.image.clip_draw(self.frame*150, self.state*150, 150, 150, (150*self.x)+(75*(self.y%2))+25,450-(35*self.x)+70)
 
     def update(self):
         self.frame =(self.frame+1)%4
@@ -51,10 +53,12 @@ class Monster_flare:
 
 
 def enter():
-    global flare,running,MapTile
+    global flare,running,MapTile, BackGroundImage,Bar
     running = True
     flare = Monster_flare()
     MapTile=Map()
+    BackGroundImage = load_image('background.png')
+    Bar = load_image('bar.png')
 
 def exit():
     global flare
@@ -84,9 +88,11 @@ def update():
 
 
 def draw():
-    global  flare,MapTile
+    global  flare,MapTile,BackGroundImage,Bar
 
     clear_canvas()
+    BackGroundImage.draw(400,300)
+    Bar.draw(400,75)
     MapTile.draw()
     flare.draw()
 
