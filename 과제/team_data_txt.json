@@ -1,0 +1,27 @@
+{
+	"Tiffany": {
+		"x": 100,
+		"y": 100,
+		"StartState": "LEFT_STAND"
+	},
+	"Yuna": {
+		"x": 200,
+		"y": 200,
+		"StartState": "RIGHT_RUN"
+	},
+	"Sunny": {
+		"x": 300,
+		"y": 300,
+		"StartState": "LEFT_RUN"
+	},
+	"Yuri": {
+		"x": 400,
+		"y": 400,
+		"StartState": "RIGHT_STAND"
+	},
+	"Jessica": {
+		"x": 500,
+		"y": 500,
+		"StartState": "LEFT_STAND"
+	}
+}

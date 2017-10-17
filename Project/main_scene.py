@@ -1,7 +1,21 @@
 from pico2d import *
 import game_framework
 
+class Map:
+    image =None
+    def __init__(self):
+        if Map.image == None :
+            Map.image = [load_image('tile1.png'), load_image('tile2.png')]
 
+
+    def draw(self):
+        i=1
+        j=1
+        row = 0
+        col = 0
+        for j in range(1,8):
+            for i in range(1,5-(j%2)):
+                self.image[0].clip_draw(0,0,150,100,(150*i)+(75*(j%2))+25,500-(35*j))
 
 class Monster_flare:
     image = None
@@ -16,7 +30,7 @@ class Monster_flare:
         self.dir = self.LEFT_DIR
         self.MAX_HP, self.MAX_MP= 300 , 5
         self.CUR_HP, self.CUR_MP=self.MAX_HP, self.MAX_MP
-        self.x,self.y = 500,500
+        self.x,self.y = 500,470
         self.DES_X,self.DES_Y = self.x,self.y
         self.state = self.STAND
         self.frame = 0
@@ -37,9 +51,10 @@ class Monster_flare:
 
 
 def enter():
-    global flare,running
+    global flare,running,MapTile
     running = True
     flare = Monster_flare()
+    MapTile=Map()
 
 def exit():
     global flare
@@ -69,11 +84,12 @@ def update():
 
 
 def draw():
-    global  flare
+    global  flare,MapTile
 
     clear_canvas()
-
+    MapTile.draw()
     flare.draw()
+
 
     update_canvas()
 

@@ -12,7 +12,7 @@ class Grass:
  
 class Boy:
     image = None
-
+    COUNT_NUM = 1
     LEFT_RUN,RIGHT_RUN,LEFT_STAND,RIGHT_STAND = 0,1,2,3
 
     def __init__(self):
@@ -20,10 +20,13 @@ class Boy:
         self.frame = random.randint(0,7)
         self.state = self.RIGHT_RUN
         self.run_frames, self.stand_frames =0,0
-
-
+        self.name = None
+        self.cnum = Boy.COUNT_NUM
+        Boy.COUNT_NUM += 1
+        self.KEY_LEFT,self.KEY_RIGHT = False,False
         if Boy.image == None:
             Boy.image = load_image('animation_sheet.png')
+
 
     def handle_left_run(self):
         self.x -=5
@@ -66,25 +69,61 @@ class Boy:
 
     handle_state = {LEFT_RUN: handle_left_run,RIGHT_RUN : handle_right_run, LEFT_STAND:handle_left_stand,RIGHT_STAND:handle_right_stand}
 
+    def handle_event(self,event):
+        if event.type == SDL_KEYDOWN:
+            if event.key == SDLK_LEFT:
+                self.KEY_LEFT = True
+            if event.key == SDLK_RIGHT:
+                self.KEY_RIGHT = True
+        elif event.type == SDL_KEYUP:
+            if event.key == SDLK_LEFT:
+                self.state = Boy.LEFT_STAND
+                self.KEY_LEFT =False
+            elif event.key == SDLK_RIGHT:
+                self.state = Boy.RIGHT_STAND
+                self.KEY_RIGHT = False
+
 
 
     def update(self):
         self.frame = (self.frame + 1) % 8
-        self.handle_state[self.state](self)
+
+        if self.KEY_RIGHT == True and self.KEY_LEFT == True:
+            self.state = self.RIGHT_STAND
+        elif self.KEY_LEFT == True:
+            self.state = self.LEFT_RUN
+        elif self.KEY_RIGHT == True:
+            self.state = self.RIGHT_RUN
+
+        if self.state == self.RIGHT_RUN:
+            self.x = min(800,self.x+5)
+        elif self.state == self.LEFT_RUN:
+            self.x = max(0,self.x-5)
+        """self.handle_state[self.state](self)"""
 
  
     def draw(self):
         self.image.clip_draw(self.frame*100, self.state*100, 100, 100,self.x,self.y)
+        numbers.draw(self.cnum,self.x+20,self.y-20,0.3)
 
-
+player_state_table={"LEFT_RUN" : Boy.LEFT_RUN, "RIGHT_RUN" : Boy.RIGHT_RUN,"LEFT_STAND" : Boy.LEFT_STAND, "RIGHT_STAND" : Boy.RIGHT_STAND}
 
 
 def enter():
     global team, grass, chr_st,running
-    i=0
-    team = [Boy() for i in range(1000)]
+
+    json_team = open('team_data_txt.json').read()
+    team = []
+    team_data = json.loads(json_team)
+    for name in team_data:
+        player = Boy()
+        player.name = name
+
+        player.state = player_state_table[team_data[name]['StartState']]
+        team.append(player)
+
     grass = Grass()
-    chr_st=-1
+    chr_st=0
     running = True
 
 def exit():
@@ -112,18 +151,21 @@ def handle_events():
 
             elif event.key == SDLK_UP:
                 chr_st+=1
-                if chr_st>999:
+                if chr_st>4:
                     chr_st = 0
 
             elif event.key == SDLK_DOWN:
                 chr_st -=1
                 if chr_st<0:
-                    chr_st = 999
+                    chr_st = 4
+            else :
+                team[chr_st].handle_event(event)
 
         elif event.type ==SDL_MOUSEMOTION and chr_st>=0:
             team[chr_st].x= event.x
             team[chr_st].y= 600-event.y
-
+        else :
+            team[chr_st].handle_event(event)
 def update():
     global team
     
