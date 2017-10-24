@@ -1,18 +1,6 @@
 from pico2d import *
-import game_framework
-
+import random
 import numbers
-from boy_class import *
-
-class Grass:
-    def __init__(self):
-        self.image = load_image('grass.png')
- 
-    def draw(self):
-        self.image.draw(400,30)
-
-
-"""
 class Boy:
     image = None
     COUNT_NUM = 1
@@ -118,119 +106,9 @@ class Boy:
             self.x = min(800,self.x+distance)
         elif self.state == self.LEFT_RUN:
             self.x = max(0,self.x-distance)
-        self.handle_state[self.state](self)
+        """self.handle_state[self.state](self)"""
 
  
     def draw(self):
         self.image.clip_draw(self.frame*100, self.state*100, 100, 100,self.x,self.y)
         numbers.draw(self.cnum,self.x+20,self.y-20,0.3)
-        """
-
-player_state_table={"LEFT_RUN" : Boy.LEFT_RUN, "RIGHT_RUN" : Boy.RIGHT_RUN,"LEFT_STAND" : Boy.LEFT_STAND, "RIGHT_STAND" : Boy.RIGHT_STAND}
-
-
-def enter():
-    global team, grass, chr_st,running, frame_time, current_time
-
-    current_time = get_time()
-    frame_time = None
-
-    json_team = open('team_data_txt.json').read()
-    team = []
-    team_data = json.loads(json_team)
-    for name in team_data:
-        player = Boy()
-        player.name = name
-
-        player.state = player_state_table[team_data[name]['StartState']]
-        team.append(player)
-
-    grass = Grass()
-    chr_st=0
-    running = True
-
-def exit():
-    global team, grass, chr_st,running
-    del(team)
-    del(grass)
-    del(chr_st)
-    del(running)
-
-def handle_events():
-    global running
-    global chr_st
-    global team
-    
-    events = get_events()
-    for event in events:
-        if event.type == SDL_QUIT:
-            running = False
-            game_framework.quit()
-
-        elif event.type == SDL_KEYDOWN :
-            if event.key == SDLK_ESCAPE:
-                running = False
-                game_framework.pop_state()
-
-            elif event.key == SDLK_UP:
-                chr_st+=1
-                if chr_st>4:
-                    chr_st = 0
-
-            elif event.key == SDLK_DOWN:
-                chr_st -=1
-                if chr_st<0:
-                    chr_st = 4
-            else :
-                team[chr_st].handle_event(event)
-
-        elif event.type ==SDL_MOUSEMOTION and chr_st>=0:
-            team[chr_st].x= event.x
-            team[chr_st].y= 600-event.y
-        else :
-            team[chr_st].handle_event(event)
-def update():
-    global team, frame_time,current_time
-
-    if frame_time == None:
-        frame_time = current_time-current_time
-    else  :
-        frame_time = get_time() - current_time
-    
-    for boy in team:
-        boy.update(frame_time)
-
-    current_time = get_time()
-    delay(0.01)
-
-def draw():
-    global chr_st
-    clear_canvas()
-    font = load_font('C:\Windows\Fonts\Candara.ttf',20)
-    chr = "Character : " + str(chr_st + 1)
-    for boy in team:
-        boy.draw()
-        
-    grass.draw()
-
-    font.draw(10, 500, chr, [0, 0, 0])
-    numbers.draw(chr_st +1,740,540)
-    update_canvas()
-
-def main():
-    open_canvas()
-    enter()
-
-    global running
-
-
-
-    while running:
-        handle_events()
-        draw()
-        update()
-
-    close_canvas()
-
-if __name__ == '__main__':
-    main()
